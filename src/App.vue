@@ -1,8 +1,10 @@
 <template>
   <div class="app">
-    <h1>Movies Featuring Tom Hanks</h1>
-    <ul v-if="allTheMoviesOfOneActor.length > 0">
-      <li v-for="movie in allTheMoviesOfOneActor" :key="movie.title">
+    <input v-model="characterName" placeholder="Name of character + enter" @keyup.enter="loadMovies"/>
+    <p>examples: Barbie, Indiana Jones, Harry Potter, Batman</p>
+    <h1>Movies featuring {{ characterName }}</h1>
+    <ul v-if="allTheMoviesOfOneCharacter.length > 0">
+      <li v-for="movie in allTheMoviesOfOneCharacter" :key="movie.title">
         <h2>{{ movie.title }}</h2>
         <p><strong>Release Date:</strong> {{ movie.release_date }}</p>
         <p>{{ movie.overview }}</p>
@@ -13,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue';
+import { defineComponent, ref, computed } from 'vue';
 
 interface Movie {
   title: string;
@@ -24,7 +26,8 @@ interface Movie {
 export default defineComponent({
   name: 'App',
   setup() {
-    const allTheMoviesOfOneActor = ref<Movie[]>([]);
+    const characterName = ref('');
+    const allTheMoviesOfOneCharacter = ref<Movie[]>([]);
 
     async function getAllMovies(url: string, api_key: string): Promise<Movie[]> {
       const response = await fetch(url + api_key);
@@ -33,20 +36,21 @@ export default defineComponent({
     }
 
     async function loadMovies() {
-      const url = 'https://api.themoviedb.org/3/search/movie?query=tom+hanks&api_key=';
+      const formattedcharacterName = characterName.value.replace(/\s+/g, ' ').trim().replace(/\s/g, '+');
+      const url = `https://api.themoviedb.org/3/search/movie?query=${formattedcharacterName}&api_key=`;
       const api_key = process.env.VUE_APP_API_SECRET_KEY; 
 
       try {
         const movies = await getAllMovies(url, api_key);
-        allTheMoviesOfOneActor.value = movies.filter(movie => movie.title && movie.release_date && movie.overview);
+        allTheMoviesOfOneCharacter.value = movies.filter(movie => movie.title && movie.release_date && movie.overview);//filter takes a callback function that is expressed as an arrow function. 
       } catch (error) {
         console.error('Error fetching movies:', error);
       }
     }
 
-    onMounted(loadMovies);
+    const formattedcharacterName = computed(() => characterName.value.replace(/\s+/g, ' ').trim().replace(/\s/g, '+'));
 
-    return { allTheMoviesOfOneActor };
+    return { characterName, allTheMoviesOfOneCharacter, loadMovies, formattedcharacterName };
   },
 });
 </script>
@@ -55,14 +59,20 @@ export default defineComponent({
 .app {
   font-family: 'Arial', sans-serif;
   margin: 20px;
+  background-color: #ADD8E6; 
+  margin: 20px;
+  padding: 20px;  
+  background-color: #FFF8DC;  
+  border: 10px solid #ADD8E6;  
+  box-sizing: border-box;
 }
 
 h1 {
-  color: #333;
+  color: hotpink;
 }
 
 h2 {
-  color: #666;
+  color: #2E8B57;
 }
 
 p {
