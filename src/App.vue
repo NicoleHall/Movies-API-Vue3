@@ -1,7 +1,8 @@
 <template>
   <div class="app">
-    <input v-model="characterName" placeholder="Name of character + enter" @keyup.enter="loadMovies"/>
-    <p>examples: Barbie, Indiana Jones, Harry Potter, Batman</p>
+    <input v-model="characterName" placeholder="Name of character" @keyup.enter="loadMovies"/>
+    <p>Examples: Barbie, Indiana Jones, Harry Potter, Batman</p>
+    <i>Click enter. Sometimes it's called return. Computers are weird 🤷‍♀️</i>
     <h1>Movies featuring {{ characterName }}</h1>
     <ul v-if="allTheMoviesOfOneCharacter.length > 0">
       <li v-for="movie in allTheMoviesOfOneCharacter" :key="movie.title">
